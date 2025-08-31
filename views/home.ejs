@@ -1,9 +1,0 @@
-<% layout('layout', { title: 'Home', user: user }) %>
-<div class="text-center">
-  <h1>Welcome to MyApp</h1>
-  <% if (user) { %>
-    <p>You are logged in as <b><%= user.username %></b></p>
-  <% } else { %>
-    <p>Please <a href="/auth/login">login</a> or <a href="/auth/register">register</a>.</p>
-  <% } %>
-</div>

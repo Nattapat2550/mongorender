@@ -1,19 +1,18 @@
-<% layout('layout', { title: 'Register', user: null }) %>
-<div class="row justify-content-center">
-  <div class="col-md-4">
-    <div class="card shadow">
-      <div class="card-body">
-        <h3 class="text-center mb-4">Register</h3>
-        <form method="POST" action="/auth/register">
-          <div class="mb-3">
-            <input type="text" name="username" class="form-control" placeholder="Username" required>
-          </div>
-          <div class="mb-3">
-            <input type="password" name="password" class="form-control" placeholder="Password" required>
-          </div>
-          <button type="submit" class="btn btn-success w-100">Register</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>สมัครสมาชิก</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>สมัครสมาชิก</h1>
+  <form action="/register" method="post">
+    <input type="text" name="username" placeholder="ชื่อผู้ใช้" required><br>
+    <input type="email" name="email" placeholder="อีเมล" required><br>
+    <input type="password" name="password" placeholder="รหัสผ่าน" required><br>
+    <button type="submit">สมัคร</button>
+  </form>
+  <a href="/login">มีบัญชีแล้ว? เข้าสู่ระบบ</a>
+</body>
+</html>
