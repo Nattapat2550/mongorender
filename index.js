@@ -28,9 +28,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: MONGO_URI,
-    collectionName: 'sessions'
-  }),
+  mongoUrl: process.env.MONGODB_URI, // ใช้ env ตรงนี้
+  collectionName: 'sessions'
+}),
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
