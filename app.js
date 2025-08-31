@@ -51,9 +51,24 @@ app.get("/register", (req, res) => {
 
 app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
-  const hash = await bcrypt.hash(password, 10);
-  await User.create({ username, email, password: hash });
-  res.redirect("/login");
+
+  if (!username || !email || !password) {
+    return res.send("กรุณากรอกข้อมูลให้ครบ");
+  }
+
+  try {
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.send("อีเมลนี้ถูกใช้แล้ว");
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+    await User.create({ username, email, password: hash });
+    res.redirect("/login");
+  } catch (err) {
+    console.error(err);
+    res.send("เกิดข้อผิดพลาด");
+  }
 });
 
 // เข้าสู่ระบบ
