@@ -8,7 +8,9 @@ const path = require('path');
 const authRoutes = require('./routes/auth');
 
 const app = express();
-
+const expressLayouts = require('express-ejs-layouts');
+app.use(expressLayouts);
+app.set('layout', 'layout');  // ใช้ views/layout.ejs เป็นแม่แบบ
 // ----- Mongoose connect -----
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
