@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
+  <meta charset="UTF-8">
   <title>Welcome</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <h1>Welcome <%= user ? user.email : "Guest" %></h1>
-
-  <% if (user) { %>
-    <p>You are logged in as <%= user.role %></p>
-    <a href="/home">Go to Home</a> | <a href="/logout">Logout</a>
-  <% } else { %>
-    <a href="/login">Login</a> | <a href="/register">Register</a>
-  <% } %>
+  <div class="container">
+    <h1>ยินดีต้อนรับ</h1>
+    <a href="/register" class="btn">สมัครสมาชิก</a>
+    <a href="/login" class="btn">เข้าสู่ระบบ</a>
+  </div>
 </body>
 </html>

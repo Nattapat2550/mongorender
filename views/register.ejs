@@ -1,22 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
+  <meta charset="UTF-8">
   <title>Register</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <h1>Register</h1>
-  <form action="/register" method="POST">
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-
-    <label>Role:</label>
-    <select name="role">
-      <option value="user">User</option>
-      <option value="admin">Admin</option>
-    </select><br>
-
-    <button type="submit">Register</button>
-  </form>
-  <p><a href="/login">Already have an account? Login</a></p>
+  <div class="form-container">
+    <h2>สมัครสมาชิก</h2>
+    <% if (error_msg) { %>
+      <p class="error"><%= error_msg %></p>
+    <% } %>
+    <% if (success_msg) { %>
+      <p class="success"><%= success_msg %></p>
+    <% } %>
+    <form action="/register" method="POST">
+      <input type="text" name="name" placeholder="ชื่อ" required>
+      <input type="email" name="email" placeholder="อีเมล" required>
+      <input type="password" name="password" placeholder="รหัสผ่าน" required>
+      <button type="submit">สมัคร</button>
+    </form>
+    <a href="/login">มีบัญชีแล้ว? เข้าสู่ระบบ</a>
+  </div>
 </body>
 </html>

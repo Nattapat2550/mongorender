@@ -1,31 +1,41 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const flash = require("connect-flash");
 const bcrypt = require("bcryptjs");
 const User = require("./models/User");
 
 const app = express();
 
 // Middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(session({
-  secret: "mysecret",
-  resave: false,
-  saveUninitialized: false
-}));
-
-// View Engine
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static("public"));
 
-// MongoDB Connect
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/test")
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false
+  })
+);
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  next();
+});
+
+// MongoDB connect
+mongoose
+  .connect("mongodb+srv://admin:1234@cluster0.nyv7co6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
   .then(() => console.log("✅ MongoDB Connected"))
-  .catch(err => console.error(err));
+  .catch(err => console.log(err));
 
 // Routes
 app.get("/", (req, res) => {
-  res.render("index", { user: req.session.user });
+  res.render("index");
 });
 
 app.get("/register", (req, res) => {
@@ -33,19 +43,23 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
-  const { email, password, role } = req.body;
-  if (!email || !password) return res.send("❌ Email & Password required");
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    req.flash("error_msg", "กรุณากรอกข้อมูลให้ครบ");
+    return res.redirect("/register");
+  }
+
+  const userExist = await User.findOne({ email });
+  if (userExist) {
+    req.flash("error_msg", "อีเมลนี้ถูกใช้แล้ว");
+    return res.redirect("/register");
+  }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-
-  try {
-    const user = new User({ email, password: hashedPassword, role: role || "user" });
-    await user.save();
-    res.redirect("/login");
-  } catch (err) {
-    console.error(err);
-    res.send("❌ User already exists");
-  }
+  const newUser = new User({ name, email, password: hashedPassword, role: "user" });
+  await newUser.save();
+  req.flash("success_msg", "สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ");
+  res.redirect("/login");
 });
 
 app.get("/login", (req, res) => {
@@ -55,26 +69,20 @@ app.get("/login", (req, res) => {
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-
-  if (user && await bcrypt.compare(password, user.password)) {
-    req.session.user = user;
-    res.redirect("/home");
-  } else {
-    res.send("❌ Invalid credentials");
+  if (!user) {
+    req.flash("error_msg", "ไม่พบบัญชีนี้");
+    return res.redirect("/login");
   }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    req.flash("error_msg", "รหัสผ่านไม่ถูกต้อง");
+    return res.redirect("/login");
+  }
+
+  // ส่ง role ไปหน้า home
+  res.render("home", { user });
 });
 
-app.get("/home", (req, res) => {
-  if (!req.session.user) return res.redirect("/login");
-  res.render("home", { user: req.session.user });
-});
-
-app.get("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/");
-  });
-});
-
-// Start Server
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🚀 Server running on ${PORT}`));
