@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-<html lang="th">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>หน้าแรก</title>
-  <link rel="stylesheet" href="/style.css">
+  <title>Welcome</title>
 </head>
 <body>
-  <h1>ระบบ Register/Login</h1>
+  <h1>Welcome <%= user ? user.email : "Guest" %></h1>
 
   <% if (user) { %>
-    <p>สวัสดี <%= user.username %>!</p>
-    <a href="/logout">Logout</a>
+    <p>You are logged in as <%= user.role %></p>
+    <a href="/home">Go to Home</a> | <a href="/logout">Logout</a>
   <% } else { %>
-    <a href="/register">สมัครสมาชิก</a> |
-    <a href="/login">เข้าสู่ระบบ</a>
+    <a href="/login">Login</a> | <a href="/register">Register</a>
   <% } %>
 </body>
 </html>

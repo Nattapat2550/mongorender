@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+</head>
+<body>
+  <h1>Home Page</h1>
+  <p>Hello, <%= user.email %>! You are logged in as <%= user.role %>.</p>
+
+  <% if (user.role === "admin") { %>
+    <h2>🔑 Admin Panel</h2>
+    <p>Only admins can see this section.</p>
+  <% } else { %>
+    <h2>👤 User Dashboard</h2>
+    <p>Welcome to your user area.</p>
+  <% } %>
+
+  <a href="/">Back to Index</a> | <a href="/logout">Logout</a>
+</body>
+</html>
