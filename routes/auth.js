@@ -1,44 +1,48 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-const User = require("../models/User");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
 
-// หน้าแรก redirect ไป login
-router.get("/", (req, res) => {
-  res.redirect("/login");
+// User schema
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String
 });
+const User = mongoose.model("User", userSchema);
 
-// Login
+// GET login
 router.get("/login", (req, res) => {
-  res.render("login", { title: "Login" });
+  res.render("login");
 });
 
+// POST login
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
-  if (!user) return res.send("User not found");
-
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.send("Wrong password");
-
-  res.send(`Welcome, ${username}!`);
+  if (user && bcrypt.compareSync(password, user.password)) {
+    res.redirect("/home");
+  } else {
+    res.send("Invalid credentials");
+  }
 });
 
-// Register
+// GET register
 router.get("/register", (req, res) => {
-  res.render("register", { title: "Register" });
+  res.render("register");
 });
 
+// POST register
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
-  const hashed = await bcrypt.hash(password, 10);
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  const newUser = new User({ username, password: hashedPassword });
+  await newUser.save();
+  res.redirect("/login");
+});
 
-  try {
-    await User.create({ username, password: hashed });
-    res.redirect("/login");
-  } catch (err) {
-    res.send("User already exists");
-  }
+// GET home
+router.get("/home", (req, res) => {
+  res.render("home");
 });
 
 module.exports = router;

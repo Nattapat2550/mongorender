@@ -1,17 +1,17 @@
 body {
   font-family: Arial, sans-serif;
-  background: linear-gradient(120deg, #89f7fe, #66a6ff);
-  height: 100vh;
+  background: #f0f2f5;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
 }
 
 .container {
   background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  padding: 30px 50px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
   width: 300px;
   text-align: center;
 }
@@ -21,32 +21,42 @@ h1 {
   color: #333;
 }
 
+label {
+  display: block;
+  text-align: left;
+  margin: 10px 0 5px;
+  color: #555;
+}
+
 input {
-  width: 90%;
+  width: 100%;
   padding: 8px;
-  margin: 8px 0;
-  border-radius: 5px;
+  border-radius: 6px;
   border: 1px solid #ccc;
 }
 
 button {
+  margin-top: 15px;
   padding: 10px 20px;
-  background: #66a6ff;
-  border: none;
+  background: #4CAF50;
   color: white;
-  border-radius: 5px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
 }
 
 button:hover {
-  background: #89f7fe;
+  background: #45a049;
 }
 
-a {
-  color: #66a6ff;
+p {
+  margin-top: 15px;
+  font-size: 14px;
+}
+p a {
+  color: #4CAF50;
   text-decoration: none;
 }
-
-a:hover {
+p a:hover {
   text-decoration: underline;
 }
