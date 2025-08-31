@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title><%= typeof title !== 'undefined' ? title : 'My App' %></title>
+  <meta charset="UTF-8">
+  <title><%= title || "My App" %></title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <%- body %>
+  <div class="container">
+    <%- body %>
+  </div>
 </body>
 </html>
