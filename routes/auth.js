@@ -1,48 +1,40 @@
 const express = require("express");
-const router = express.Router();
 const bcrypt = require("bcryptjs");
-const mongoose = require("mongoose");
+const User = require("../models/User");
 
-// User schema
-const userSchema = new mongoose.Schema({
-  username: String,
-  password: String
-});
-const User = mongoose.model("User", userSchema);
+const router = express.Router();
 
-// GET login
-router.get("/login", (req, res) => {
-  res.render("login");
-});
-
-// POST login
-router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ username });
-  if (user && bcrypt.compareSync(password, user.password)) {
-    res.redirect("/home");
-  } else {
-    res.send("Invalid credentials");
-  }
-});
-
-// GET register
+// GET Register Page
 router.get("/register", (req, res) => {
-  res.render("register");
+  res.render("register", { title: "สมัครสมาชิก" });
 });
 
-// POST register
+// POST Register
 router.post("/register", async (req, res) => {
-  const { username, password } = req.body;
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  const newUser = new User({ username, password: hashedPassword });
-  await newUser.save();
-  res.redirect("/login");
-});
+  try {
+    const { username, password } = req.body;
 
-// GET home
-router.get("/home", (req, res) => {
-  res.render("home");
+    // เช็คว่ามี user ซ้ำหรือยัง
+    let user = await User.findOne({ username });
+    if (user) {
+      return res.send("⚠️ มีผู้ใช้นี้แล้ว กรุณาเลือกชื่อใหม่");
+    }
+
+    // เข้ารหัส password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // สร้าง user ใหม่
+    user = new User({
+      username,
+      password: hashedPassword,
+    });
+
+    await user.save();
+    res.send("✅ สมัครสมาชิกสำเร็จ! <a href='/auth/login'>เข้าสู่ระบบ</a>");
+  } catch (err) {
+    console.error(err);
+    res.send("❌ เกิดข้อผิดพลาด");
+  }
 });
 
 module.exports = router;
