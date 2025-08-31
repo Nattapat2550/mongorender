@@ -1,52 +1,37 @@
-require('dotenv').config();
-const express = require('express');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const mongoose = require('mongoose');
-const path = require('path');
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const expressLayouts = require("express-ejs-layouts");
 
-const authRoutes = require('./routes/auth');
+dotenv.config();
 
 const app = express();
-const expressLayouts = require('express-ejs-layouts');
-app.use(expressLayouts);
-app.set('layout', 'layout');  // ใช้ views/layout.ejs เป็นแม่แบบ
-// ----- Mongoose connect -----
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('✅ MongoDB Connected'))
-.catch(err => console.error('❌ MongoDB Error:', err.message));
-// ----- view engine & static -----
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+
+// Middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("public"));
 
-// ----- session -----
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'keyboardcat',
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-  mongoUrl: process.env.MONGODB_URI, // ใช้ env ตรงนี้
-  collectionName: 'sessions'
-}),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
-}));
+// EJS
+app.use(expressLayouts);
+app.set("view engine", "ejs");
 
-// ----- routes -----
-app.use('/', authRoutes);
-
-// ----- default route -----
-app.get('/', (req, res) => {
-  if (req.session.userId) return res.redirect('/dashboard');
-  res.redirect('/login');
+// ตั้งค่า title default
+app.use((req, res, next) => {
+  res.locals.title = "My App";
+  next();
 });
 
-// ----- listen port from env (Render requires this) -----
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Routes
+const authRoutes = require("./routes/auth");
+app.use("/", authRoutes);
+
+// Connect MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB Connected");
+    app.listen(process.env.PORT || 3000, () =>
+      console.log(`🚀 Server running on port ${process.env.PORT || 3000}`)
+    );
+  })
+  .catch((err) => console.log(err));
