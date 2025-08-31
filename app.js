@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 
 // หน้าแรก
 app.get("/", (req, res) => {
-  res.render("index");
+  res.send("Hello Render!");
 });
 
 // สมัครสมาชิก
