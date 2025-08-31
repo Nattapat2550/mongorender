@@ -1,43 +1,43 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const session = require("express-session");
-const dotenv = require("dotenv");
-const path = require("path");
 const MongoStore = require("connect-mongo");
-
-dotenv.config();
+const path = require("path");
+require("dotenv").config();
 
 const app = express();
 
-// Middleware
+// Body parser
+app.use(express.urlencoded({ extended: true }));
+
+// Session
+app.use(
+  session({
+    secret: "secret-key",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    cookie: { maxAge: 1000 * 60 * 60 } // 1 ชั่วโมง
+  })
+);
+
+// View engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use(express.static(path.join(__dirname, "public")));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-  secret: process.env.SESSION_SECRET || "mysecret",
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI
-  }),
-  cookie: { secure: false } // render ฟรีใช้ http, ถ้า https ใส่ true
-}));
 
-// MongoDB connect
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ MongoDB error:", err));
 // Routes
-const authRoutes = require("./routes/auth");
-app.use("/auth", authRoutes);
+app.use("/auth", require("./routes/auth"));
 
-// หน้าแรก
+// Home
 app.get("/", (req, res) => {
-  res.render("index", { title: "หน้าแรก" });
+  res.render("home", { user: req.session.user });
 });
 
-// Start server
+// MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.log(err));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Home</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-  <div class="container">
-    <h1>Welcome Home!</h1>
-    <p>You have successfully logged in.</p>
-    <a href="/login">Logout</a>
-  </div>
-</body>
-</html>
+<% layout('layout', { title: 'Home', user: user }) %>
+<div class="text-center">
+  <h1>Welcome to MyApp</h1>
+  <% if (user) { %>
+    <p>You are logged in as <b><%= user.username %></b></p>
+  <% } else { %>
+    <p>Please <a href="/auth/login">login</a> or <a href="/auth/register">register</a>.</p>
+  <% } %>
+</div>

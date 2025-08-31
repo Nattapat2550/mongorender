@@ -1,20 +1,19 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <title>สมัครสมาชิก</title>
-</head>
-<body>
-  <h1>สมัครสมาชิก</h1>
-  <form action="/auth/register" method="POST">
-    <label>ชื่อผู้ใช้:</label>
-    <input type="text" name="username" required>
-    <br>
-    <label>รหัสผ่าน:</label>
-    <input type="password" name="password" required>
-    <br>
-    <button type="submit">สมัครสมาชิก</button>
-  </form>
-  <p><a href="/">กลับหน้าหลัก</a></p>
-</body>
-</html>
+<% layout('layout', { title: 'Register', user: null }) %>
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <div class="card shadow">
+      <div class="card-body">
+        <h3 class="text-center mb-4">Register</h3>
+        <form method="POST" action="/auth/register">
+          <div class="mb-3">
+            <input type="text" name="username" class="form-control" placeholder="Username" required>
+          </div>
+          <div class="mb-3">
+            <input type="password" name="password" class="form-control" placeholder="Password" required>
+          </div>
+          <button type="submit" class="btn btn-success w-100">Register</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
