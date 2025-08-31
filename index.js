@@ -1,18 +1,14 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
-import authRoutes from "./routes/auth.js";
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const path = require("path");
 
 dotenv.config();
 
+const authRoutes = require("./routes/auth"); // ปรับ auth.js ให้ใช้ module.exports
+
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// ตั้งค่า __dirname สำหรับ ES Module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -25,15 +21,14 @@ app.set("views", path.join(__dirname, "views"));
 // Routes
 app.use("/", authRoutes);
 
-// MongoDB URI จาก Environment Variables
+// MongoDB URI
 const mongoURI = process.env.MONGO_URI;
-
 if (!mongoURI) {
-  console.error("❌ ERROR: MONGO_URI is not defined. Please set it in Render Environment Variables.");
+  console.error("❌ MONGO_URI is not defined");
   process.exit(1);
 }
 
-// MongoDB Connect
+// Connect MongoDB
 mongoose.connect(mongoURI)
   .then(() => {
     console.log("✅ Connected to MongoDB Atlas");
