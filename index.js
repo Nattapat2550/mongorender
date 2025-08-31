@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const path = require("path");
+const expressLayouts = require("express-ejs-layouts"); // <-- เพิ่มตรงนี้
 const authRoutes = require("./routes/auth");
 
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 // EJS setup
+app.use(expressLayouts); // <-- เพิ่มตรงนี้
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
